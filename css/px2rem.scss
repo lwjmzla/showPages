@@ -1,0 +1,13 @@
+@function px2rem( $px ){
+	@return $px*320/$designWidth/20 + rem;
+}
+
+@mixin oneLineHide(){
+    text-overflow: ellipsis;overflow: hidden;white-space: nowrap;
+}
+@mixin moreLineHide($num:3){
+    display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: $num;overflow: hidden;
+}
+@mixin beCenter($height,$bordRad:5px){
+    height: $height;line-height: $height;text-align: center;border-radius: $bordRad;
+}
