@@ -1,0 +1,50 @@
+.layui-m-layercont { padding: 15px !important; }
+
+.w710 { width: 7.1rem; margin: 0 auto; }
+
+.w690 { width: 6.9rem; margin: 0 auto; }
+
+.top { height: 0.98rem; display: flex; position: absolute; top: 0; width: 100%; max-width: 736px; }
+.top a.gh { display: block; margin-left: 0.24rem; flex: 1; padding-top: 0.16rem; }
+.top a.gh img { height: 0.6rem; width: 2.44rem; }
+.top i.kf { font-size: 0.68rem; margin-right: 0.24rem; margin-top: -0.1rem; padding-left: 0.24rem; }
+
+.banner { width: 100%; height: 12.74rem; background: url(../img/banner.png) no-repeat center center; background-size: cover; box-sizing: border-box; padding-top: 6.4rem; }
+
+.form_recommend { box-sizing: border-box; border-radius: 0.1rem; padding: 0rem 0.2rem; background: #fff; border: 1px solid #d1cfd2; padding-bottom: 0.36rem; padding-top: 0.2rem; }
+.form_recommend.active { border-color: #4ea4ef; }
+.form_recommend .form_row { height: 0.75rem; border-bottom: 1px solid #d1cfd2; display: flex; align-items: center; }
+.form_recommend .form_row .iconfont { font-size: 0.36rem; color: #666; margin-left: 0.1rem; margin-right: 0.15rem; }
+.form_recommend .form_row b.iconfont { font-size: 0.18rem; }
+.form_recommend .form_row span.iconfont { margin-right: 0.08rem; display: none; color: #d1cfd2; }
+.form_recommend .form_row input[type="number"], .form_recommend .form_row input[type="text"] { font-size: 0.24rem; flex: 1; position: relative; top: 1px; }
+.form_recommend .form_row .line { width: 1px; height: 0.48rem; background: #d1cfd2; margin: 0 0.14rem; }
+.form_recommend .form_row input[type="button"] { font-size: 0.24rem; background: #FFFFFF; width: 2rem; height: 0.5rem; border: 1px solid #f5a623; color: #f5a623; border-radius: 0.1rem; }
+.form_recommend .form_row input[type="button"].forbid { background: #ccc; border-color: #ccc; color: #000; }
+.form_recommend .form_row:first-child { margin-bottom: 0.11rem; }
+.form_recommend .dropDownBox { padding-left: 0.15rem; }
+
+.btns .btn_recommend { display: block; width: 4.6rem; height: 0.72rem; line-height: 0.72rem; text-align: center; border-radius: 0.4rem; font-size: 0.28rem; color: #fff; margin: 0 auto; background: linear-gradient(to right, #4ea4ef, #4b46f9); margin-top: 0.4rem; }
+.btns p { margin-top: 0.22rem; line-height: 1; font-size: 0.24rem; color: #9B9B9B; text-align: center; }
+.btns p i { font-size: 0.24rem; margin-right: 0.06rem; }
+
+.banner_tip { font-size: 0.24rem; color: #666; line-height: 1; margin-top: 0.36rem; margin-bottom: 0.7rem; text-align: center; }
+
+.banner_tip span { color: #4a79ff; font-weight: bold; font-size: 0.28rem; }
+
+.common_module { padding: 0.6rem 0; }
+
+.common_h { font-size: 0.36rem; color: #595757; line-height: 1; font-weight: bold; text-align: center; position: relative; margin-bottom: 0.6rem; }
+.common_h::after { content: ''; position: absolute; left: 50%; transform: translateX(-50%); bottom: -0.22rem; width: 0.6rem; height: 0.04rem; background: #4a79ff; }
+
+.resolve_b { overflow: hidden; }
+.resolve_b ul { white-space: nowrap; width: 12rem; overflow-x: auto; }
+.resolve_b ul::-webkit-scrollbar { display: none; }
+.resolve_b .item { width: 5.04rem; height: 5.92rem; border-radius: 5px; white-space: initial; box-sizing: border-box; padding: 0.7rem 0.28rem 0.3rem; }
+.resolve_b .item h2, .resolve_b .item h3 { font-size: 0.44rem; line-height: 1; }
+.resolve_b .item h3 { margin-top: 0.22rem; margin-bottom: 0.35rem; }
+.resolve_b .item h4 { height: 0.64rem; line-height: 0.64rem; color: #666; font-size: 0.24rem; margin-bottom: 0.24rem; }
+.resolve_b .item p { color: #666; font-size: 0.28rem; line-height: 0.4rem; margin-bottom: 0.4rem; }
+.resolve_b .item div { border: 1px solid #4a79ff; height: 0.82rem; line-height: 0.82rem; text-align: center; font-size: 0.34rem; color: #4a79ff; border-radius: 5px; }
+.resolve_b .item:first-child { margin-left: 0.28rem; margin-right: 0.2rem; background: url(../img/solve1.png) no-repeat; background-size: cover; }
+.resolve_b .item:last-child { margin-right: 0.28rem; background: url(../img/solve2.png) no-repeat; background-size: cover; }

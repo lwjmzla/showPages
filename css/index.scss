@@ -1,0 +1,95 @@
+@import 'px2rem'; //第一步先把px2rem导入 
+
+$designWidth : 750; //写scss之前，必须要先定义designWidth。
+//值的设置方式    width: px2rem(750);    [data-dpr="2"]  div{font-size:14px;}
+$themeColor:#4ea4ef;
+$themeColorDeep:#4b46f9;
+$themeColorDeep1:#3230df;
+$borderColor:#d1cfd2;
+$grayColor:#9B9B9B;
+$iconsW:px2rem(224);
+$iconsH:px2rem(364);
+
+//.layui-m-layercont{line-height: 1.2!important;min-width: px2rem(200);}
+//.layui-m-layer2 .layui-m-layercont i {width: px2rem(50)!important;height: px2rem(50)!important;}
+//.layui-m-layer2 .layui-m-layercont p{font-size: px2rem(30);}
+.layui-m-layercont{padding: 15px!important;}
+
+.w710{width: px2rem(710);margin: 0 auto;}
+.w690{width: px2rem(690);margin: 0 auto;}
+.top{
+    height: px2rem(98);display: flex;position: absolute;top: 0;width: 100%;max-width: 736px;
+    a.gh{
+        display: block;margin-left: px2rem(24);flex: 1;
+        padding-top: px2rem(16);
+        img{height: px2rem(60);width: px2rem(244);}
+    }
+    i.kf{font-size: px2rem(68);margin-right: px2rem(24);margin-top: px2rem(-10);padding-left: px2rem(24);}
+}
+
+.banner{
+    width: 100%;height: px2rem(1274);background: url(../img/banner.png) no-repeat center center;background-size: cover;
+    box-sizing: border-box;padding-top: px2rem(640);
+}
+
+.form_recommend{
+    box-sizing: border-box;border-radius: px2rem(10);padding: px2rem(0) px2rem(20);background: #fff;border: 1px solid #d1cfd2;padding-bottom: px2rem(36);padding-top: px2rem(20);
+    &.active{border-color: $themeColor;}
+    .form_row{
+        height: px2rem(75);border-bottom: 1px solid  $borderColor;display: flex;align-items: center;
+        .iconfont{font-size: px2rem(36);color: #666;margin-left: px2rem(10);margin-right: px2rem(15);}
+        b.iconfont{font-size: px2rem(18);}
+        span.iconfont{margin-right: px2rem(8);display: none;color: $borderColor;}
+        input[type="number"],input[type="text"]{font-size: px2rem(24);flex: 1;position: relative;top: 1px;}
+        .line{width: 1px;height: px2rem(48);background: $borderColor;margin: 0 px2rem(14);}
+        input[type="button"]{font-size: px2rem(24);background: #FFFFFF;width: px2rem(200);height: px2rem(50);border: 1px solid #f5a623;color: #f5a623;border-radius: px2rem(10);}
+        input[type="button"].forbid{background: #ccc;border-color: #ccc;color: #000;}
+        &:first-child{margin-bottom: px2rem(11);}
+    }
+    .dropDownBox{padding-left: px2rem(15);}
+}
+.btns{
+    .btn_recommend{display: block;width: px2rem(460);@include beCenter(px2rem(72),px2rem(40));font-size: px2rem(28);color: #fff;margin: 0 auto;background: linear-gradient(to right,$themeColor,$themeColorDeep);margin-top: px2rem(40);}
+    p{
+        margin-top: px2rem(22);line-height: 1;font-size: px2rem(24);color: $grayColor;text-align: center;
+        i{font-size: px2rem(24);margin-right: px2rem(6);}
+    }
+}
+
+.banner_tip{ font-size: px2rem(24); color: #666; line-height: 1;margin-top: px2rem(36);margin-bottom: px2rem(70);text-align: center;}
+.banner_tip span{ color: #4a79ff;font-weight: bold;font-size: px2rem(28);}
+
+.common_module{padding: px2rem(60) 0;}
+
+.common_h{
+    font-size: px2rem(36);color: #595757;line-height: 1;font-weight: bold;text-align: center;position: relative;margin-bottom: px2rem(60);
+    &::after{content: '';position: absolute;left: 50%;transform: translateX(-50%);bottom: px2rem(-22);width: px2rem(60);height: px2rem(4);background: #4a79ff;}
+}
+
+.resolve_b{
+    overflow: hidden;
+    ul{
+        white-space: nowrap;width: px2rem(1200);overflow-x: auto;
+        &::-webkit-scrollbar {
+                display: none;
+            }
+    }
+    .item{
+        width: px2rem(504);height: px2rem(592); border-radius: 5px;white-space: initial;
+        box-sizing: border-box;padding: px2rem(70) px2rem(28) px2rem(30);
+        h2,h3{font-size: px2rem(44);line-height: 1;}
+        h3{margin-top: px2rem(22);margin-bottom: px2rem(35);}
+        h4{height: px2rem(64);line-height: px2rem(64);color: #666;font-size: px2rem(24);margin-bottom: px2rem(24);}
+        p{color: #666;font-size: px2rem(28);line-height: px2rem(40);margin-bottom: px2rem(40);}
+        div{border: 1px solid #4a79ff;height: px2rem(82);line-height: px2rem(82);text-align: center;font-size: px2rem(34);color: #4a79ff;border-radius: 5px;}
+    }
+    .item:first-child{
+        margin-left: px2rem(28);
+        margin-right: px2rem(20);
+        background: url(../img/solve1.png) no-repeat;background-size: cover;
+    }
+    .item:last-child{
+        margin-right: px2rem(28);
+        background: url(../img/solve2.png) no-repeat;background-size: cover;
+    }
+}
