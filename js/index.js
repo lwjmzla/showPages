@@ -24,7 +24,7 @@ function IsCorrectCode(code) {
 function tipsMsg(contentStr, callbackFn, styleStr) {
     layer.open({
         content: contentStr,
-        style: styleStr || 'background-color:rgba(0,0,0,.7); color:#fff; border:none;width: 70%;font-size: 0.64rem;', //自定风格
+        style: styleStr || 'background-color:rgba(0,0,0,.7); color:#fff; border:none;width: 70%;font-size: 0.3rem;', //自定风格
         time: 2,
         shade: false,
         end: callbackFn,
@@ -126,8 +126,8 @@ function throttle(fun, delay, time) {
 
 //添加下滑动效
 function loadFn(){
-	var els = [].slice.call(document.getElementsByClassName('fn_fadeInUp'));
 	var scrollTopH = $(window).scrollTop();
+	/*var els = [].slice.call(document.getElementsByClassName('fn_fadeInUp'));
 	var vh = document.documentElement.clientHeight;
 	els.forEach(function(ele,index){
 		if($(ele).offset().top< scrollTopH + vh && !$(ele).hasClass('fadeInUp')){
@@ -137,7 +137,7 @@ function loadFn(){
 			},800);
 		}
 	});
-	/*if(els.length == $('.fadeInUp').length){
+	if(els.length == $('.fadeInUp').length){
 		$(window).unbind('scroll',loadFn);
 	}*/
 	var bannerFormDis = $('.banner .form_recommend').offset().top + $('.banner .form_recommend')[0].offsetHeight
@@ -150,22 +150,62 @@ function loadFn(){
 //$(window).on('scroll',loadFn);
 $(window).on('scroll',throttle(loadFn,10,1000));
 
-//避免移动端绝对定位问题的影响
-/*$('input[type="text"],input[type="number"]').focus(function(){
-	$('.fix_bottom ').hide();
+//动画效果
+var wow = new WOW({
+	boxClass: 'wow',
+	animateClass: 'animated',
+	offset: 20,
+	mobile: true,
+	live: true
 });
-$('input[type="text"],input[type="number"]').blur(function(){
-	$('.fix_bottom ').show();
-});*/
+wow.init();
 
-$('.meterial_title>div').click(function(){
-	var index = $(this).index();
-	$(this).addClass('active').siblings().removeClass('active');
-	$('.meterial_con').css('transform','translateX(-'+ index*50 +'%)')
-})
+//判断浏览器
+var browserInfo = new browserInfo();
+var Awidth = 200
+if (browserInfo.device == 'Tablet') {
+	Awidth = 350
+}
+
+// 旋转轮播
+var zturn = new zturn({
+    id: "zturn",
+    opacity: 0.8,
+    width: $('.zturn-item').width(), // 要跟元素宽度一致  直接动态获取 有前途 iphone 6 158
+    Awidth: Awidth,//轮播盒子全部宽度
+    scale: 0.8,
+    auto: true,//是否轮播 默认5000
+    turning: 5000//轮播时长
+});
+
+//移动端手势滑动
+var stratX,endX,timerZturn;
+$('#zturn').on('touchstart',function(ev){
+	stratX=ev.originalEvent.touches[0].clientX;
+});
+$('#zturn').on('touchmove',function(ev){
+	if (timerZturn) {
+		clearTimeout(timerZturn)
+	}
+	timerZturn = setTimeout(function(){
+		endX=ev.originalEvent.touches[0].clientX;//在移动的过程中，值不断被重复赋值
+	},16)
+});
+$('#zturn').on('touchend',function(ev){
+	//进入这里，意味着移动结束
+	//console.log(endX>stratX?'右':'左');
+	setTimeout(function(){
+		if(endX>stratX){
+			zturn.prev_();
+		}else if(endX<stratX){
+			zturn.next_();
+		}
+	},16)
+});
+
 
 //滚动到表单
-$('.cousltBtn,.top .kf').on('click',function(){
+$('.cousltBtn,.toForm').on('click',function(){
 	//  100/320 这个相当于是比例，无论哪个屏幕尺寸都是这个比例 
 	$('html,body')
 	.stop()
@@ -203,14 +243,9 @@ $('.icon-guanbi2').on('click',function(){
 	$('.success_tips').hide();
 })
 
-$('#select_bussType,#bottom_select_bussType').click(function(){
+/*$('.select_bussType').click(function(){
 	var _this = this;
 	weui.picker([
-	/*{
-	    label: '男',
-	    value: 0,
-	    //disabled: true // 不可用
-	}*/
 	{
 	    label: '美国发明专利全风险代理申请（巴黎公约途径）',
 	    value: 0
@@ -230,7 +265,7 @@ $('#select_bussType,#bottom_select_bussType').click(function(){
 	   },
 	   id: _this.id //用来识别选择器
 	});
-})
+})*/
 
 
 /*var businessMatch = {
@@ -240,219 +275,243 @@ $('#select_bussType,#bottom_select_bussType').click(function(){
 	'图形商标设计注册':3
 }*/
 
+
+function BindForm(formWrapName) {
+	this.formWrapName = formWrapName
+	this.count_recommend = new Counttime($(this.formWrapName + '.identi_code')[0]);
+	this.dataRecommend = {
+		Request:'',
+		CustomerName:'',
+		SourceLocationKey: 32, //  以后要换
+		IpType:2,
+		Token:'',
+		Mobile:'',
+		MobileCaptcha:'',
+		//Business: 167 // 以后需要 ajax
+	};
+	
+	// 初始化
+    this.init = function(){
+        this.bindEventCode();
+        this.bindEventSubmitBtn();
+    };
+    this.init();     // 自动初始化
+}
+BindForm.prototype = {
+	bindEventCode: function () {
+		var formWrapName = this.formWrapName
+		var _this = this
+		$(formWrapName +'.identi_code').on('click',function(){
+			if (!_this.commonValidate()) { // 验证不通过
+				return false;
+			}
+			loading();
+			$.ajax({
+		        url: domain + "/request/campaignsendvcode",
+		        type:"post",
+		        cache: false,
+		        dataType: "json",
+		        data: {'mobile':$(formWrapName +'.mobile_recommend').val()},  
+		        //crossDomain:true,
+		        success: function (resData) {
+		        	layer.closeAll('loading');
+		        	if(resData.Success){
+		        		_this.count_recommend.open();
+		        		_this.dataRecommend.Token = resData.Token;
+		        		tipsMsg('短信已发送');
+		        	}else{
+		        		tipsMsg('短信服务器出错');
+		        	}
+		        },
+				error: function(e) { 
+					layer.closeAll('loading');
+					alert(JSON.stringify(e))
+				}   	        
+		        
+		    })
+		})
+	},
+	bindEventSubmitBtn: function () {
+		var formWrapName = this.formWrapName
+		var _this = this
+		$(formWrapName + '.btn_recommend').on('click',function(){
+			if (!_this.commonValidate()) { // 验证不通过
+				return false;
+			}
+			if(!IsCorrectCode($(formWrapName + '.yzm').val())){
+				tipsMsg('请输入正确的短信验证码');
+				return false;
+			}
+			
+			_this.dataRecommend.Mobile = $(formWrapName + '.mobile_recommend').val();
+			_this.dataRecommend.MobileCaptcha = $(formWrapName + '.yzm').val();
+			_this.dataRecommend.Request = $(formWrapName + '.request').val()
+			_this.dataRecommend.CustomerName = $(formWrapName + '.name').val();
+			
+			loading();
+			$.ajax({
+		        url: domain + "/request/campaignpurchase",
+		        type:"post",
+		        cache: false,
+		        dataType: "json",
+		        data: _this.dataRecommend,  
+		        //contentType: "application/json; charset=utf-8",
+		        success: function (resData) {
+		        	layer.closeAll('loading');
+		        	if(resData.Result){
+		        		$('.success_tips').show();
+		        		$(formWrapName).find('input[type="text"],input[type="number"]').val('');
+		        		_this.count_recommend.close();
+		        	}else{
+		        		tipsMsg(resData.Message);
+		        	}
+		        },
+				error: function(e) { 
+					layer.closeAll('loading');
+					alert(JSON.stringify(e))
+				}   	        
+		        
+		    })
+			
+		})
+	},
+	commonValidate: function () {
+		var formWrapName = this.formWrapName
+		if($(formWrapName + '.request').val()==''){
+			tipsMsg('要求不能为空');
+			return false;
+		}
+		if(!IsCorrectName($(formWrapName +'.name').val())){
+			tipsMsg('请输入正确的姓名');
+			return false;
+		}
+		if(!IsCorrectMobile($(formWrapName + '.mobile_recommend').val())){
+			tipsMsg('请输入正确的手机号码');
+			return false;
+		}
+		return true;
+	}
+}
+
 //表单1
-var count_recommend = new Counttime($('.identi_code_first')[0]);
-$('.identi_code_first').on('click',function(){
-	if(!IsCorrectMobile($('#mobile_recommend').val())){
-		tipsMsg('请输入正确的手机号码');
-		return false;
-	}
-	loading();
-	$.ajax({
-        url: domain + "/request/campaignsendvcode",
-        type:"post",
-        cache: false,
-        dataType: "json",
-        data: {'mobile':$('#mobile_recommend').val()},  
-        //crossDomain:true,
-        success: function (resData) {
-        	layer.closeAll('loading');
-        	if(resData.Success){
-        		count_recommend.open();
-        		dataRecommend.Token = resData.Token;
-        		tipsMsg('短信已发送');
-        	}else{
-        		tipsMsg('短信服务器出错');
-        	}
-        },
-		error: function(e) { 
-			layer.closeAll('loading');
-			alert(JSON.stringify(e))
-		}   	        
-        
-    })
-})
-
-var dataRecommend = {
-	Request:'',
-	CustomerName:'商标求购',
-	SourceLocationKey:28,
-	IpType:3,
-	Token:'',
-	Mobile:'',
-	MobileCaptcha:'',
-	RequestDetail:'',
-	BusinessMaps:[],
-	AdvIdea:'',
-	CustomerName:''
-};
-
-
-$('.btn_recommend_first').on('click',function(){
-	if($('#bussType').val()==''){
-		tipsMsg('业务类型不能为空');
-		return false;
-	}
-	if($('#mobile_industry').val()==''){
-		tipsMsg('商标所属分类不能为空');
-		return false;
-	}
-	if($('#request').val()==''){
-		tipsMsg('要求不能为空');
-		return false;
-	}
-	if(!IsCorrectName($('#name').val())){
-		tipsMsg('请输入正确的姓名');
-		return false;
-	}
-	if(!IsCorrectMobile($('#mobile_recommend').val())){
-		tipsMsg('请输入正确的手机号码');
-		return false;
-	}
-	if(!IsCorrectCode($('#yzm_recommend').val())){
-		tipsMsg('请输入正确的短信验证码');
-		return false;
-	}
-	
-	dataRecommend.Mobile = $('#mobile_recommend').val();
-	dataRecommend.MobileCaptcha = $('#yzm_recommend').val();
-	dataRecommend.BusinessMaps = [{ key:11, value:$('#bussType').val()}];
-	dataRecommend.Request = $('#request').val();
-	dataRecommend.RequestDetail = '行业：'+ $('#mobile_industry').val();
-	dataRecommend.CustomerName = $('#name').val();
-	dataRecommend.AdvIdea = advIdea;
-	
-	loading();
-	$.ajax({
-        url: domain + "/request/campaignpurchase",
-        type:"post",
-        cache: false,
-        dataType: "json",
-        data: dataRecommend,  
-        //contentType: "application/json; charset=utf-8",
-        success: function (resData) {
-        	layer.closeAll('loading');
-        	if(resData.Result){
-        		$('.success_tips').show();
-        		$('.banner').find('input[type="text"],input[type="number"]').val('');
-        		count_recommend.close();
-        	}else{
-        		tipsMsg(resData.Message);
-        	}
-        },
-		error: function(e) { 
-			layer.closeAll('loading');
-			alert(JSON.stringify(e))
-		}   	        
-        
-    })
-	
-})
-
+var formWrapName = '.banner '
+//bindFormFun(formWrapName)  // 面向过程
+new BindForm(formWrapName)   // 面向对象 
 //表单2
-var count_recommend_bottom = new Counttime($('.identi_code_bottom')[0]);
-$('.identi_code_bottom').on('click',function(){
-	if(!IsCorrectMobile($('#bottom_mobile_recommend').val())){
-		tipsMsg('请输入正确的手机号码');
-		return false;
-	}
-	loading();
-	$.ajax({
-        url: domain + "/request/campaignsendvcode",
-        type:"post",
-        cache: false,
-        dataType: "json",
-        data: {'mobile':$('#bottom_mobile_recommend').val()},  
-        //crossDomain:true,
-        success: function (resData) {
-        	layer.closeAll('loading');
-        	if(resData.Success){
-        		count_recommend_bottom.open();
-        		bottom_dataRecommend.Token = resData.Token;
-        		tipsMsg('短信已发送');
-        	}else{
-        		tipsMsg('短信服务器出错');
-        	}
-        },
-		error: function(e) { 
-			layer.closeAll('loading');
-			alert(JSON.stringify(e))
-		}   	        
-        
-    })
-})
-
-var bottom_dataRecommend = {
-	Request:'',
-	CustomerName:'商标求购',
-	SourceLocationKey:28,
-	IpType:3,
-	Token:'',
-	Mobile:'',
-	MobileCaptcha:'',
-	RequestDetail:'',
-	BusinessMaps:{},
-	AdvIdea:'',
-	CustomerName:''
-};
+var formWrapName2 = '.bottom '
+//bindFormFun(formWrapName2)
+new BindForm(formWrapName2)
 
 
-$('.btn_recommend_bottom').on('click',function(){
-	if($('#bottom_bussType').val()==''){
-		tipsMsg('业务类型不能为空');
-		return false;
-	}
-	if($('#bottom_mobile_industry').val()==''){
-		tipsMsg('商标所属分类不能为空');
-		return false;
-	}
-	if($('#bottom_request').val()==''){
-		tipsMsg('要求不能为空');
-		return false;
-	}
-	if(!IsCorrectName($('#bottom_name').val())){
-		tipsMsg('请输入正确的姓名');
-		return false;
-	}
-	if(!IsCorrectMobile($('#bottom_mobile_recommend').val())){
-		tipsMsg('请输入正确的手机号码');
-		return false;
-	}
-	if(!IsCorrectCode($('#bottom_yzm_recommend').val())){
-		tipsMsg('请输入正确的短信验证码');
-		return false;
-	}
+/*function bindFormFun(formWrapName) {
+	var count_recommend = new Counttime($(formWrapName + '.identi_code')[0]);
+	$(formWrapName +'.identi_code').on('click',function(){
+		if($(formWrapName + '.bussType').val()==''){
+			tipsMsg('申请类型不能为空');
+			return false;
+		}
+		if($(formWrapName + '.request').val()==''){
+			tipsMsg('要求不能为空');
+			return false;
+		}
+		if(!IsCorrectName($(formWrapName +'.name').val())){
+			tipsMsg('请输入正确的姓名');
+			return false;
+		}
+		if(!IsCorrectMobile($(formWrapName + '.mobile_recommend').val())){
+			tipsMsg('请输入正确的手机号码');
+			return false;
+		}
+		loading();
+		$.ajax({
+	        url: domain + "/request/campaignsendvcode",
+	        type:"post",
+	        cache: false,
+	        dataType: "json",
+	        data: {'mobile':$(formWrapName +'.mobile_recommend').val()},  
+	        //crossDomain:true,
+	        success: function (resData) {
+	        	layer.closeAll('loading');
+	        	if(resData.Success){
+	        		count_recommend.open();
+	        		dataRecommend.Token = resData.Token;
+	        		tipsMsg('短信已发送');
+	        	}else{
+	        		tipsMsg('短信服务器出错');
+	        	}
+	        },
+			error: function(e) { 
+				layer.closeAll('loading');
+				alert(JSON.stringify(e))
+			}   	        
+	        
+	    })
+	})
 	
-	bottom_dataRecommend.Mobile = $('#bottom_mobile_recommend').val();
-	bottom_dataRecommend.MobileCaptcha = $('#bottom_yzm_recommend').val();
-	bottom_dataRecommend.BusinessMaps = [{ key:11, value:$('#bottom_bussType').val()}];
-	bottom_dataRecommend.Request = $('#bottom_request').val();
-	bottom_dataRecommend.RequestDetail = '行业：'+ $('#bottom_mobile_industry').val();
-	bottom_dataRecommend.CustomerName = $('#bottom_name').val();
-	bottom_dataRecommend.AdvIdea = advIdea;
+	var dataRecommend = {
+		Request:'',
+		CustomerName:'',
+		SourceLocationKey: 31, //  以后要换
+		IpType:4,
+		Token:'',
+		Mobile:'',
+		MobileCaptcha:'',
+		Business: 167 // 以后需要 ajax
+	};
 	
-	loading();
-	$.ajax({
-        url: domain + "/request/campaignpurchase",
-        type:"post",
-        cache: false,
-        dataType: "json",
-        data: bottom_dataRecommend,  
-        success: function (resData) {
-        	layer.closeAll('loading');
-        	if(resData.Result){
-        		$('.success_tips').show();
-        		$('.bottom_form').find('input[type="text"],input[type="number"]').val('');
-        		count_recommend_bottom.close();
-        	}else{
-        		tipsMsg(resData.Message);
-        	}
-        },
-		error: function(e) { 
-			layer.closeAll('loading');
-			alert(JSON.stringify(e))
-		}   	        
-        
-    })
 	
-})
+	$(formWrapName + '.btn_recommend').on('click',function(){
+		if($(formWrapName + '.bussType').val()==''){
+			tipsMsg('申请类型不能为空');
+			return false;
+		}
+		if($(formWrapName + '.request').val()==''){
+			tipsMsg('要求不能为空');
+			return false;
+		}
+		if(!IsCorrectName($(formWrapName +'.name').val())){
+			tipsMsg('请输入正确的姓名');
+			return false;
+		}
+		if(!IsCorrectMobile($(formWrapName + '.mobile_recommend').val())){
+			tipsMsg('请输入正确的手机号码');
+			return false;
+		}
+		if(!IsCorrectCode($(formWrapName + '.yzm').val())){
+			tipsMsg('请输入正确的短信验证码');
+			return false;
+		}
+		
+		dataRecommend.Mobile = $(formWrapName + '.mobile_recommend').val();
+		dataRecommend.MobileCaptcha = $(formWrapName + '.yzm').val();
+		dataRecommend.Request = $(formWrapName + '.bussType').val() + '：' + $(formWrapName + '.request').val()
+		dataRecommend.CustomerName = $(formWrapName + '.name').val();
+		
+		loading();
+		$.ajax({
+	        url: domain + "/request/campaignpurchase",
+	        type:"post",
+	        cache: false,
+	        dataType: "json",
+	        data: dataRecommend,  
+	        //contentType: "application/json; charset=utf-8",
+	        success: function (resData) {
+	        	layer.closeAll('loading');
+	        	if(resData.Result){
+	        		$('.success_tips').show();
+	        		$(formWrapName).find('input[type="text"],input[type="number"]').val('');
+	        		count_recommend.close();
+	        	}else{
+	        		tipsMsg(resData.Message);
+	        	}
+	        },
+			error: function(e) { 
+				layer.closeAll('loading');
+				alert(JSON.stringify(e))
+			}   	        
+	        
+	    })
+		
+	})
+}*/
+
