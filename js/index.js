@@ -282,7 +282,7 @@ function BindForm(formWrapName) {
 	this.dataRecommend = {
 		Request:'',
 		CustomerName:'',
-		SourceLocationKey: 32, //  以后要换
+		SourceLocationKey: 35, //  以后要换
 		IpType:2,
 		Token:'',
 		Mobile:'',

@@ -10,7 +10,7 @@ $grayColor:#9B9B9B;
 $iconsW:px2rem(224);  // 注意要用2X的图片  就是750 对应的尺寸
 $iconsH:px2rem(364);
 
-//body{overflow-x: hidden;}
+
 //.layui-m-layercont{line-height: 1.2!important;min-width: px2rem(200);}
 //.layui-m-layer2 .layui-m-layercont i {width: px2rem(50)!important;height: px2rem(50)!important;}
 //.layui-m-layer2 .layui-m-layercont p{font-size: px2rem(30);}
@@ -164,7 +164,7 @@ $iconsH:px2rem(364);
     li:nth-of-type(2n){margin-right: 0;}
 }
 
-#zturn{width: 100%;height: px2rem(440);overflow: hidden;}
+#zturn{width: 100%;height: px2rem(440);overflow: hidden;position: relative;}
 @media screen and (min-width:640px) {
     #zturn{position: relative;left: px2rem(-65);}
 }
